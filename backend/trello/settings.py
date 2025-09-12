@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,7 +45,6 @@ INSTALLED_APPS = [
     'projects.apps.ProjectsConfig',
     'boards.apps.BoardsConfig',
     'drf_yasg',
-    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -124,6 +124,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -163,8 +164,11 @@ SWAGGER_SETTINGS = {
     }
 }
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+CORS_ALLOW_ALL_ORIGINS = True
 
+# Redis config
 REDIS_HOST = 'localhost'
-REDIS_PORT = 6380
+REDIS_PORT = 6379  
 REDIS_DB = 0
+REDIS_ENCODING = 'utf-8'
+REDIS_DECODE_RESPONSES = True

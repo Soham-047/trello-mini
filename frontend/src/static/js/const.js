@@ -1,5 +1,5 @@
 export const backendUrl = "http://localhost:8000";
-
+export const unsplashKey = "YcQ4RJP1k4RGIFO2MbCb4yNu3nD5Y7J29_DBhr6-GTw";
 export const colors = [
     ["#0079bf", false],
     ["#70b500", false],

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-
 import { useHistory } from "react-router-dom";
 import { backendUrl } from "../../static/js/const";
 import { useForm } from "react-hook-form";
@@ -61,7 +60,7 @@ const TabTwo = ({ display, register }) => {
   );
 };
 
-const RegisterForm = ({setErrMsgs}) => {
+const RegisterForm = ({ setErrMsgs }) => {
   const { register, handleSubmit, watch } = useForm();
   const [isTabOne, setIsTabOne] = useState(true);
   const firstName = watch("first_name", "");
@@ -73,14 +72,33 @@ const RegisterForm = ({setErrMsgs}) => {
 
   const onSubmit = async (data) => {
     const url = `${backendUrl}/register/`;
+
+    // Convert into FormData to handle file uploads
+    const formData = new FormData();
+    for (let key in data) {
+      formData.append(key, data[key]);
+    }
+
+    // Grab profile pic manually
+    const fileInput = document.querySelector('input[name="profile_pic"]');
+    if (fileInput && fileInput.files[0]) {
+      formData.append("profile_pic", fileInput.files[0]);
+    }
+
     try {
-      await axios.post(url, data);
+      await axios.post(url, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       history.push("/login");
     } catch (err) {
       if (err.response?.status === 400) {
-          setErrMsgs({signup: true , err: true, msgs: err.response.data});
-      }else {
-          setErrMsgs({signup: false, err: true, msgs: { Connection: 'Refused', Server: 'Maybe Down'}});
+        setErrMsgs({ signup: true, err: true, msgs: err.response.data });
+      } else {
+        setErrMsgs({
+          signup: false,
+          err: true,
+          msgs: { Connection: "Refused", Server: "Maybe Down" },
+        });
       }
     }
   };
@@ -95,40 +113,44 @@ const RegisterForm = ({setErrMsgs}) => {
 
   const getClass = () => {
     let str = "btn";
-    if (!validTabContent()) {
-      str += " btn--disabled";
-    }
+    if (!validTabContent()) str += " btn--disabled";
     return str;
   };
 
   return (
     <>
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="login-fieldset">
-        <TabOne display={isTabOne} register={register} />
-        <TabTwo display={!isTabOne} register={register} />
-        <div className="buttons">
-          {!isTabOne ? (
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="login-fieldset">
+          <TabOne display={isTabOne} register={register} />
+          <TabTwo display={!isTabOne} register={register} />
+
+          <div className="buttons">
+            {!isTabOne ? (
+              <button
+                id="prev"
+                type="button"
+                className="btn"
+                onClick={() => setIsTabOne(true)}
+                style={{ marginRight: "1em" }}
+              >
+                Prev
+              </button>
+            ) : null}
+
             <button
-              id="prev"
-              className="btn"
-              onClick={() => setIsTabOne(true)}
-              style={{ marginRight: "1em" }}
+              id="next"
+              className={getClass()}
+              type={isTabOne ? "button" : "submit"} // <- KEY FIX
+              onClick={() => {
+                if (isTabOne) setIsTabOne(false);
+              }}
+              disabled={!validTabContent()}
             >
-              Prev
+              {isTabOne ? "Next" : "Sign Up"}
             </button>
-          ) : null}
-          <button
-            id="next"
-            className={getClass()}
-            onClick={() => setIsTabOne(false)}
-            disabled={!validTabContent()}
-          >
-            {isTabOne ? "Next" : "Sign Up"}
-          </button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
     </>
   );
 };
