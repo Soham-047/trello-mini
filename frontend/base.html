@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Mini-Trello{% endblock %}</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Mini-Trello</h1>
+    <div class="right">
+      <button class="btn" id="logoutBtn">Logout</button>
+    </div>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <script>
+    // global logout
+    const token = localStorage.getItem("access");
+    document.getElementById("logoutBtn")?.addEventListener("click", ()=>{
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      location.href = "auth.html";
+    });
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
