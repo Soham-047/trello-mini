@@ -1,39 +1,56 @@
-# trello-clone
-A Trello clone made using Django Rest Framework, SASS, React, and Redis.
+# Trello Clone
 
-## Features
-- Register and Login
-    - JWT Authentication to connect DRF and React
-    - Can login with username or email
-- Projects (Teams)
-    - Create Projects
-    - Invite members to join projects via one time link
-    - Change member access level - Admin or Normal
-        - Admin can edit project details, invite new members, and change other members' access levels.
-- Boards
-    - Create personal boards or project boards
-    - Recently Viewed Boards
-    - Starred Boards
-    - Create and reorder lists
-    - Create, reorder, and change list of cards
-        - Add labels to cards
-        - Assign members to cards
-        - Add attachments to cards
-        - Add comments to cards
-    - Search
-        - Autocomplete (Debounced)
-    - Unsplash API Integration
-        - Set environment variable REACT_APP_UNSPLASH_API_ACCESS_KEY with access key
-    - Automatically adapt header and board title styling based on brightness of board background
-- Notifications
-    - When someone assigns you to a card
-    - When someone comments on a card you're assigned to
-    - When you're invited to a project
-    - When someone makes you admin of a project
+A full-stack **Trello-like project management tool** built with **Django Rest Framework**, **React**, **Redis**, and **SASS**.  
+The app lets teams (or solo users) manage projects visually with boards, lists, and cards — just like Trello.
 
-## Getting Started
-1. Install [Python](https://www.python.org/downloads/), [Yarn](https://classic.yarnpkg.com/en/docs/install/), [Redis](https://redis.io/download).
-2. Clone the repo
+---
+
+## 🚀 Features
+
+### 🔑 Authentication
+- Register & Login with **JWT authentication** (DRF + React integration)  
+- Login with either **username or email**  
+
+### 👥 Projects (Teams)
+- Create projects (like Trello workspaces)  
+- Invite members via **one-time invite link**  
+- Manage member roles:  
+  - **Admin** → can edit project details, invite members, and manage access  
+  - **Normal** → standard access  
+
+### 📋 Boards
+- Create **personal** or **project-based** boards  
+- **Recently Viewed** boards  
+- **Starred Boards** for quick access  
+- Create, reorder, and rename **lists**  
+- Create, reorder, and move **cards**  
+  - Add **labels**, assign **members**, attach files, and leave **comments**  
+- 🔍 **Search with autocomplete** (debounced for performance)  
+- 🌆 **Unsplash integration** → set board backgrounds with random images  
+  - Requires `REACT_APP_UNSPLASH_API_ACCESS_KEY` in `.env`  
+- Dynamic **board header & title styling** based on background brightness  
+
+### 🔔 Notifications
+- When you’re assigned to a card  
+- When someone comments on a card you’re on  
+- When invited to a project  
+- When promoted to **Admin**  
+
+---
+
+## 🛠️ Getting Started
+
+### 1. Install dependencies
+Make sure you have these installed:
+- [Python](https://www.python.org/downloads/)  
+- [Yarn](https://classic.yarnpkg.com/en/docs/install/)  
+- [Redis](https://redis.io/download)  
+
+### 2. Clone repo
+```bash
+git clone https://github.com/<your-username>/<your-repo>.git
+cd trello-clone
+
 ```
 $ git clone https://github.com/vdevired/trello-clone.git
 $ cd trello-clone
