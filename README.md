@@ -1,82 +1,208 @@
 # Trello Clone
 
-A full-stack **Trello-like project management tool** built with **Django Rest Framework**, **React**, **Redis**, and **SASS**.  
-The app lets teams (or solo users) manage projects visually with boards, lists, and cards — just like Trello.
+A full-stack **Trello-like** project management app built with a modern stack: **Django + DRF + Channels (backend)** and **React (frontend)**.  
+It supports personal & project boards, lists, cards, file attachments, notifications and realtime-ish features via Redis.  
 
 ---
 
 ## 🚀 Features
 
 ### 🔑 Authentication
-- Register & Login with **JWT authentication** (DRF + React integration)  
-- Login with either **username or email**  
+- Register & login using JWT (Simple JWT)
+- Login with **username or email**
 
 ### 👥 Projects (Teams)
-- Create projects (like Trello workspaces)  
-- Invite members via **one-time invite link**  
-- Manage member roles:  
-  - **Admin** → can edit project details, invite members, and manage access  
-  - **Normal** → standard access  
+- Create projects (teams)
+- Invite members with one-time invite links
+- Manage roles: **Admin** (can edit project, invite, manage access) or **Member**
 
 ### 📋 Boards
-- Create **personal** or **project-based** boards  
-- **Recently Viewed** boards  
-- **Starred Boards** for quick access  
-- Create, reorder, and rename **lists**  
-- Create, reorder, and move **cards**  
-  - Add **labels**, assign **members**, attach files, and leave **comments**  
-- 🔍 **Search with autocomplete** (debounced for performance)  
-- 🌆 **Unsplash integration** → set board backgrounds with random images  
-  - Requires `REACT_APP_UNSPLASH_API_ACCESS_KEY` in `.env`  
-- Dynamic **board header & title styling** based on background brightness  
+- Personal & project boards
+- Recently viewed and starred boards
+- Create, rename, reorder lists
+- Create, move, reorder cards  
+  - Labels, assignees, attachments, comments
+- 🔍 Search with autocomplete (debounced)
+- 🌆 Board backgrounds (colors + Unsplash images)  
+  - Requires `REACT_APP_UNSPLASH_API_ACCESS_KEY`
+- Adaptive board header/title styling based on background brightness
 
 ### 🔔 Notifications
-- When you’re assigned to a card  
-- When someone comments on a card you’re on  
-- When invited to a project  
-- When promoted to **Admin**  
+- Card assignments
+- Comments on your cards
+- Project invites
+- Role changes (member → admin)
+
+---
+
+## 🧰 Tech stack
+
+**Backend**
+- Python, **Django 5.x**
+- Django REST Framework (DRF)
+- JWT Auth via `djangorestframework-simplejwt`
+- Django Channels + Redis (for realtime + caching)
+- SQLite (default) → switch to Postgres in production
+- `django-cors-headers` for CORS
+
+**Frontend**
+- React (CRA / modern tooling)
+- Axios for API requests
+- React Hook Form for forms
+- Drag & Drop (react-beautiful-dnd or similar)
+- SASS for styling
+- Env vars via `.env`
+
+**Dev Tools**
+- Yarn (frontend), pipenv (backend env manager), Redis
 
 ---
 
 ## 🛠️ Getting Started
 
-### 1. Install dependencies
-Make sure you have these installed:
-- [Python](https://www.python.org/downloads/)  
-- [Yarn](https://classic.yarnpkg.com/en/docs/install/)  
-- [Redis](https://redis.io/download)  
+### 1. Clone repo
+    git clone https://github.com/Soham-047/trello-mini.git
+    cd trello-mini
+### 2. Backend setup
+    cd backend
+    # create virtualenv via pipenv (or use venv)
+    python -m venv venv
+    source venv/bin/activate
+    
+    # Run DB migrations
+    python manage.py migrate
+    
+    # (optional) Create superuser
+    python manage.py createsuperuser
 
-### 2. Clone repo
-```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd trello-clone
+### 3. Frontend Setup
+    cd ../frontend
+    yarn install
+### 4. Environment Variables
+    DJANGO_SECRET_KEY=your_secret_key_here
+    DEBUG=True
+    ALLOWED_HOSTS=127.0.0.1,localhost
+    REDIS_HOST=127.0.0.1
+    REDIS_PORT=6380
+    REDIS_DB=0
+    # other settings as needed
+    
+    ##Frontend Env
+    REACT_APP_BACKEND_URL=http://127.0.0.1:8000      # base API URL
+    REACT_APP_UNSPLASH_API_ACCESS_KEY=your_unsplash_access_key  # optional (for backgrounds)
 
-```
-$ git clone https://github.com/vdevired/trello-clone.git
-$ cd trello-clone
-```
-3. Install [pipenv](https://pypi.org/project/pipenv/), a python virtual environment manager. Install backend dependencies and run migrations to create database. Default database is SQLite.
-```
-$ cd backend
-$ pipenv install
-$ pipenv run python manage.py migrate
-```
-4. Install frontend dependencies.
-```
-$ cd frontend
-$ yarn install
-```
-5. Run redis on port 6380
-``` 
-$ redis-server --port 6380
-```
-6. Run both frontend and backend servers with following commands in appropriate directories.
-```
-$ pipenv run python manage.py runserver
-$ yarn start
-```
+### 5. Start Redis
+    redis-server --port 6380
+### 6. Run Servers
+    # Backend
+    cd backend
+    python manage.py runserver
+    # Frontend
+    cd frontend
+    yarn start
 
-## Screenshots
+  # Open the frontend (usually http://localhost:3000) and the backend API at http://127.0.0.1:8000.
+
+### 🗄️ Database Schema (ERD Overview)
+
+Entities
+
+User (id, username, email, avatar)
+
+Workspace (id, name, owner_id)
+
+Board (id, title, visibility, workspace_id, members)
+
+List (id, board_id, title, position)
+
+Card (id, list_id, title, desc, labels, due_date, position)
+
+Comment (id, card_id, text, author_id, created_at)
+
+ActivityLog (id, board_id, actor_id, action, created_at)
+
+(📷 Include ERD diagram screenshot in /docs/schema.png or ASCII version here.)
+
+
+### 📑 API Reference
+Auth
+
+    POST /auth/register/ → Register new user
+    
+    POST /auth/token/ → Login (JWT token)
+    
+    POST /auth/token/refresh/ → Refresh JWT
+
+Workspaces
+
+    GET /workspaces/ → List workspaces
+    
+    POST /workspaces/ → Create workspace
+    
+    GET /workspaces/{id}/ → Workspace details
+
+Boards
+
+    GET /boards/ → List boards
+    
+    POST /boards/ → Create board
+    
+    GET /boards/{id}/ → Get board details
+    
+    PATCH /boards/{id}/ → Update board
+    
+    DELETE /boards/{id}/ → Delete board
+
+Lists
+
+    GET /lists/ → List lists
+    
+    POST /lists/ → Create list
+    
+    PATCH /lists/{id}/ → Update list (rename/reorder)
+    
+    DELETE /lists/{id}/ → Delete list
+
+Cards
+
+    GET /cards/ → List cards
+    
+    POST /cards/ → Create card
+    
+    GET /cards/{id}/ → Card detail
+    
+    PATCH /cards/{id}/ → Update card
+    
+    DELETE /cards/{id}/ → Delete card
+    
+    POST /cards/{id}/comments/ → Add comment
+
+Comments
+
+    GET /cards/{id}/comments/ → List comments
+    
+    DELETE /comments/{id}/ → Delete comment
+
+Activity
+
+    GET /boards/{id}/activity/ → Board activity log
+
+Search
+
+    GET /boards/{id}/search?q=term → Search cards by title/labels/assignees
+
+### 📂 Docs
+
+    /docs/HLD.md → architecture diagram, realtime (WS + Redis), deployment sketch
+    
+    /docs/LLD.md → API contracts, DB schema, ordering (fractional position), error model
+    
+    /docs/api.yaml → OpenAPI spec (or Postman collection)
+    
+    /docs/schema.png → ERD diagram
+
+### 🖼️ Screenshots
+    ## Screenshots
 ![Board Page Video](https://i.imgur.com/gDTkwAS.gif)
 ![Landing Page](https://imgur.com/CTgpNlD.jpg)
 ![Login Page](https://imgur.com/as4jhYS.jpg)
@@ -86,5 +212,3 @@ $ yarn start
 ![Project Page](https://imgur.com/QOsbu3y.jpg)
 ![Project Page 2](https://i.imgur.com/PGbDYvS.png)
 ![Card Modal](https://i.imgur.com/xpFOTsO.png)
-
-Design Inspiration: https://www.behance.net/gallery/47031411/Trello-Atlassian-Redesign
